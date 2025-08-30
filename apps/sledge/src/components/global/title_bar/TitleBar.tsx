@@ -21,7 +21,6 @@ import {
   titleBarTitleSub,
 } from '~/styles/globals/title_bar.css';
 import '~/styles/globals/title_bar_region.css';
-import { join } from '~/utils/PathUtils';
 
 export default function TitleBar() {
   const [isMaximizable, setIsMaximizable] = createSignal(false);
@@ -46,28 +45,25 @@ export default function TitleBar() {
   });
 
   createEffect(() => {
-    const width = canvasStore.canvas.width;
-    const height = canvasStore.canvas.height;
-
     if (location.pathname.startsWith('/editor')) {
       let title = '';
-      const projName = projectStore.lastSavedAt ? (fileStore.location.name ?? '[unknown project]') : '[new project]';
-
+      let projName = fileStore.location.name ?? 'new project';
+      const extension = fileStore.extension !== 'sledge' ? fileStore.extension : '';
       // non-custom titlebar (mac/linux)
       if (isDecorated()) {
         const size = `(${canvasStore.canvas.width} x ${canvasStore.canvas.height})`;
         const projPath = fileStore.location.path;
         if (projPath) {
-          title += `${projName} ${size} - ${projPath}`;
+          title += `${projName}.${extension} ${size} - ${projPath}`;
         } else {
-          title += `${projName} ${size}`;
+          title += `${projName}.${extension} ${size}`;
         }
       } else {
         const projPath = fileStore.location.path;
         if (projPath) {
-          title += `${projName} - ${projPath}`;
+          title += `${projName}.${extension} - ${projPath}`;
         } else {
-          title += `${projName}`;
+          title += `${projName}.${extension}`;
         }
       }
 
@@ -100,9 +96,12 @@ export default function TitleBar() {
                     }}
                   >
                     <p class={titleBarTitle} style={{ opacity: 0.5 }}>
-                      {fileStore.location.path ?? ''}
+                      {fileStore.location.path ?? ''}\
                     </p>
-                    <p class={titleBarTitle}>{fileStore.location.name ? join('', fileStore.location.name) : 'new project'}</p>
+                    <p class={titleBarTitle}>
+                      {fileStore.location.name ?? 'new project'}
+                      {fileStore.extension !== 'sledge' ? `.${fileStore.extension}` : ''}
+                    </p>
                     <p class={titleBarTitleSub}>{projectStore.isProjectChangedAfterSave ? ' (unsaved)' : ''}</p>
                   </div>
                   <div

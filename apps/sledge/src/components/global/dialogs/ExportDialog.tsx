@@ -20,7 +20,7 @@ import {
   exportDialogFileName,
   exportDialogRoot,
 } from '~/styles/dialogs/export_dialog.css';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 import { Dialog, DialogExternalProps } from './Dialog';
 
 const fileTypeOptions: DropdownOption<ExportableFileTypes>[] = [

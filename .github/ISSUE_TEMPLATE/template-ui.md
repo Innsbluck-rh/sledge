@@ -2,7 +2,7 @@
 name: template/ui
 about: ui/layout template
 title: 'ui: '
-labels: ''
+labels: 'ui'
 assignees: Innsbluck-rh
 
 ---

@@ -25,6 +25,8 @@ type ColorStore = {
   swatches: string[];
 };
 type FileStore = {
+  openAs: 'project' | 'image';
+  extension: string;
   location: FileLocation;
 };
 type InteractStore = {
@@ -66,12 +68,12 @@ export type ToolStore = {
 const defaultAppearanceStore: AppearanceStore = {
   leftSide: {
     shown: true,
-    tabs: ['editor', 'effects', 'history'],
+    tabs: ['editor', 'effects'],
     selectedIndex: 0,
   },
   rightSide: {
     shown: false,
-    tabs: ['project', 'export', 'danger'],
+    tabs: ['project', 'export', 'history', 'danger'],
     selectedIndex: 0,
   },
 };
@@ -82,6 +84,8 @@ const defaultColorStore: ColorStore = {
   swatches: ['#000000', '#FFFFFF', '#ffff00', '#00ffff', '#00ff00', '#ff00ff', '#ff0000', '#0000ff', '#000080', '#400080'],
 };
 const defaultFileStore: FileStore = {
+  openAs: 'project',
+  extension: 'sledge',
   location: {
     name: undefined,
     path: undefined,

@@ -144,11 +144,7 @@ export class FillTool implements ToolBehavior {
 
     // バッファ全体の差分を履歴に記録
     const dm = agent.getDiffManager();
-    dm.add({
-      kind: 'whole',
-      before: sourceBuffer,
-      after: finalBuffer.slice(),
-    });
+    dm.setWhole(sourceBuffer, finalBuffer.slice());
 
     // 最終結果を設定
     // new Uint8Array(currentBuffer).set(finalBuffer); 前の
@@ -240,11 +236,7 @@ export class FillTool implements ToolBehavior {
 
     // バッファ全体の差分を履歴に記録
     const dm = agent.getDiffManager();
-    dm.add({
-      kind: 'whole',
-      before: sourceBuffer,
-      after: currentBuffer.slice(),
-    });
+    dm.setWhole(sourceBuffer, currentBuffer.slice());
 
     // 結果を記録
     addDebugImage(currentBuffer.slice(), width, height, '3. Area Fill Result', sessionId);

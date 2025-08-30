@@ -4,15 +4,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build:debug",
-      "type": "cargo",
-      "command": "build",
-      "args": ["--manifest-path=./src-tauri/Cargo.toml", "--no-default-features"]
-    },
-    {
       "label": "dev",
       "dependsOrder": "sequence",
-      "dependsOn": ["build:debug", "ui:dev"]
+      "dependsOn": ["ui:dev"]
     },
     {
       "label": "ui:dev",
@@ -43,7 +37,7 @@
     },
     {
       "label": "dev",
-      "dependsOn": ["build:debug", "ui:dev"],
+      "dependsOn": ["ui:dev"],
       "group": {
         "kind": "build"
       }

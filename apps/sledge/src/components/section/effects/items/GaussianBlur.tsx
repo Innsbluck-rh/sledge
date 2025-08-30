@@ -53,12 +53,8 @@ const GaussianBlur: Component = () => {
                 gaussian_blur(agent.getNonClampedBuffer(), canvasStore.canvas.width, canvasStore.canvas.height, blurOptions());
                 agent.forceUpdate();
 
-                agent.getDiffManager().add({
-                  kind: 'whole',
-                  before: originalBuffer,
-                  after: agent.getBuffer(),
-                });
-                agent.registerToHistory();
+                agent.getDiffManager().setWhole(originalBuffer, agent.getBuffer());
+                agent.registerToHistory({ tool: 'fx', fxName: 'GaussianBlur' });
               }
             }}
           >

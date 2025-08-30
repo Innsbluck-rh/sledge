@@ -4,8 +4,7 @@ import { Component, createEffect, For } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { thumbnailDir } from '~/io/project/out/save';
 import { recentFilesContainerCol } from '~/routes/start/start.css';
-import getFileId from '~/utils/getFileId';
-import { join } from '~/utils/PathUtils';
+import { getFileUniqueId, join } from '~/utils/FileUtils';
 import ListFileItem from './file_item/ListFileItem';
 
 const RecentFileList: Component<{ files: FileLocation[]; onClick: (file: FileLocation) => void }> = (props) => {
@@ -15,7 +14,7 @@ const RecentFileList: Component<{ files: FileLocation[]; onClick: (file: FileLoc
     props.files.forEach(async (file) => {
       if (!file.path || !file.name) return;
       const path = join(file.path, file.name);
-      const fileId = await getFileId(path);
+      const fileId = await getFileUniqueId(path);
       const fileName = fileId + '.png';
       const thumbPath = join(await thumbnailDir(), fileName);
       const assetUrl = convertFileSrc(thumbPath);

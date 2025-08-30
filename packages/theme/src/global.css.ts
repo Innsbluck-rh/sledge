@@ -118,7 +118,7 @@ export const lightTheme = createTheme(vars, {
     surface: '#f0f0f0',
     canvasArea: '#fafafa',
     canvas: '#ffffff',
-    onBackground: '#000000D9',
+    onBackground: '#202020',
     selectionBorder: '#808080',
     selectionBorderFill: '#80808040',
     border: '#aaaaaa',

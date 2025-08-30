@@ -5,19 +5,18 @@ import { makeTimer } from '@solid-primitives/timer';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { Component, createEffect, createMemo, createSignal, onMount, Show } from 'solid-js';
 import { saveProject } from '~/io/project/out/save';
-import { fileStore, setFileStore } from '~/stores/EditorStores';
+import { fileStore } from '~/stores/EditorStores';
 import { projectStore } from '~/stores/ProjectStores';
 import { saveButtonMainButton, saveButtonRoot, saveButtonSide } from '~/styles/globals/save_section.css';
 import { eventBus } from '~/utils/EventBus';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 
 const SaveSection: Component = () => {
   const [isSaveMenuShown, setIsSaveMenuShown] = createSignal(false);
   const [saveLog, setSaveLog] = createSignal<string | undefined>(undefined);
-  const isOWPossible = () => fileStore.location.name !== undefined && fileStore.location.path !== undefined;
+  const isOWPossible = () => fileStore.location.name !== undefined && fileStore.location.path !== undefined && fileStore.openAs === 'project';
 
   const save = (forceNew?: boolean) => {
-    setFileStore('location', 'name', fileStore.location.name);
     saveProject(fileStore.location.name, forceNew ? undefined : fileStore.location.path);
   };
 
@@ -178,7 +177,7 @@ const SaveSection: Component = () => {
               // 'font-family': ZFB09,
             }}
           >
-            {fileStore.location.name && fileStore.location.name ? 'save' : 'save (new)'}
+            {isOWPossible() ? 'save' : 'save (new)'}
           </p>
         </div>
         <div class={saveButtonSide} onClick={() => setIsSaveMenuShown(!isSaveMenuShown())}>

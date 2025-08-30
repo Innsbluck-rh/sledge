@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import path from 'path';
 import topLevelAwait from 'vite-plugin-top-level-await';
 import wasmPlugin from 'vite-plugin-wasm';
@@ -8,6 +9,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    env: dotenv.config({ path: '.env.vitest' }).parsed,
     setupFiles: [path.resolve(__dirname, 'vitest.setup.ts')],
     include: ['apps/sledge/test/**/*.test.ts', 'apps/sledge/test/**/*.test.tsx'],
     exclude: ['**/dist/**', '**/node_modules/**', '**/target/**'],

@@ -3,7 +3,7 @@ import { vars, ZFB03, ZFB09 } from '@sledge/theme';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { Component, Show } from 'solid-js';
 import { fileStore } from '~/stores/EditorStores';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 
 const ProjectLocation: Component = () => {
   const isNewProject = () => !fileStore.location.name || !fileStore.location.path;

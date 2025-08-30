@@ -51,12 +51,12 @@ export function deletePixelInSelection(layerId?: string): boolean {
 
   // 差分を履歴登録（whole）
   const dm = agent.getDiffManager();
-  dm.add({ kind: 'whole', before, after: after.slice() });
+  dm.setWhole(before, after.slice());
 
   // バッファを反映
   bufferManager.buffer.set(after);
 
-  agent.registerToHistory();
+  agent.registerToHistory({ tool: 'clear' });
   // タイルを更新対象に
   agent.getTileManager().setAllDirty();
   agent.forceUpdate();

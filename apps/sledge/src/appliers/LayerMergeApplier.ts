@@ -49,7 +49,7 @@ export async function mergeLayer({ originLayer, targetLayer }: LayerMergeParams)
   // バッファ更新 + 履歴登録（ImageTransferApplier と同じ流儀）
   targetAgent.setBuffer(out, true, true);
   const dm = targetAgent.getDiffManager();
-  dm.add({ kind: 'whole', before, after: out });
+  dm.setWhole(before, out);
   dm.flush();
   targetAgent.registerToHistory();
   targetAgent.forceUpdate();

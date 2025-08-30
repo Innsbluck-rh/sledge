@@ -5,7 +5,7 @@ import { getCurrentWindow, WindowOptions } from '@tauri-apps/api/window';
 import { message } from '@tauri-apps/plugin-dialog';
 import { exit } from '@tauri-apps/plugin-process';
 import { globalConfig } from '~/stores/GlobalStores';
-import { PathToFileLocation } from '~/utils/PathUtils';
+import { PathToFileLocation } from '~/utils/FileUtils';
 import { safeInvoke } from './TauriUtils';
 
 export function zoomForIntegerize(dpr: number) {

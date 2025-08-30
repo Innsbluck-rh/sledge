@@ -34,6 +34,9 @@ So you don't need to rebuild or "pnpm install" after building wasm package (or a
 Note that you usually don't have to run "pnpm:build" to ensure that determine the changes are OK or not OK.
 If you need to do that, just run "pnpm:dev" and ask for user to check the actual behavior.
 
+Documents and comments are all meant to be written in English.
+If you find some Japanese comment and it doesn't need to be Japanese, you should turn that line into English.
+
 When user creates component in \*\*/components directory, use "Component" type from SolidJS, not "React.FC".
 Like:
 

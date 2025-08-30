@@ -6,6 +6,7 @@ import { TileIndex } from '~/controllers/layer/image/managers/Tile';
 import { getActiveAgent } from '~/controllers/layer/LayerAgentManager';
 import SelectionMask from '~/controllers/selection/SelectionMask';
 import { SelectionFillMode, SelectionLimitMode, toolStore } from '~/stores/EditorStores';
+import { canvasStore } from '~/stores/ProjectStores';
 import { eventBus } from '~/utils/EventBus';
 
 export type PixelFragment = {
@@ -94,12 +95,13 @@ class SelectionManager {
 
   constructor() {
     // キャンバスサイズが不明な段階では (0,0) で初期化
-    this.selectionMask = new SelectionMask(0, 0);
+    // this.selectionMask = new SelectionMask(0, 0);
+    this.selectionMask = new SelectionMask(canvasStore.canvas.width, canvasStore.canvas.height);
     this.previewMask = undefined;
 
     // キャンバスサイズ変更が来たら、両方のマスクをリサイズ
     eventBus.on('canvas:sizeChanged', (e: any) => {
-      // console.log('SelectionManager: Received canvas:sizeChanged event', e.newSize);
+      console.log('SelectionManager: Received canvas:sizeChanged event', e.newSize);
       this.selectionMask.changeSize(e.newSize);
       if (this.previewMask) {
         this.previewMask.changeSize(e.newSize);

@@ -1,6 +1,6 @@
 import { MenuListOption } from '@sledge/ui';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
-import { getActiveAgent } from '~/controllers/layer/LayerAgentManager';
+import { projectHistoryController } from '~/controllers/history/ProjectHistoryController';
 import { saveProject } from '~/io/project/out/save';
 import { openDevTools } from '~/utils/WindowUtils';
 
@@ -23,14 +23,14 @@ export const ContextMenuItems: { [key: string]: MenuListOption } = {
     label: 'Undo',
     icon: '/icons/misc/undo.png',
     onSelect: () => {
-      getActiveAgent()?.undo();
+      projectHistoryController.undo();
     },
   },
   Redo: {
     label: 'Redo',
     icon: '/icons/misc/redo.png',
     onSelect: () => {
-      getActiveAgent()?.redo();
+      projectHistoryController.redo();
     },
   },
   Save: {
@@ -40,8 +40,8 @@ export const ContextMenuItems: { [key: string]: MenuListOption } = {
       saveProject();
     },
   },
-  // BaseXxx = only label and icon. use like: {...BaseXxx, onSelect: () => {} }
-  // ラベルとアイコンの組み合わせの登録のみ
+  // BaseXxx = only label and icon. Use like: {...BaseXxx, onSelect: () => {} }
+  // Registration for label+icon combinations only.
   BaseRemove: {
     label: 'Remove',
     icon: '/icons/misc/remove.png',

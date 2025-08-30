@@ -5,7 +5,7 @@ import { addLayer } from '~/controllers/layer/LayerListController';
 import { BlendMode, LayerType } from '~/models/layer/Layer';
 import { setFileStore } from '~/stores/EditorStores';
 import { loadImageData, loadLocalImage } from '~/utils/DataUtils';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 
 export async function importImageFromPath(location: FileLocation): Promise<boolean> {
   if (!location || !location.path || !location.name) {
@@ -16,23 +16,31 @@ export async function importImageFromPath(location: FileLocation): Promise<boole
   const bitmap = await loadLocalImage(path);
   const imageData = await loadImageData(bitmap);
 
+  setFileStore('openAs', 'image');
   const fileNameWithoutExt = location.name.split('.').slice(0, -1).join('.');
   setFileStore('location', 'path', location.path);
   setFileStore('location', 'name', fileNameWithoutExt);
+  const fileExtension = location.name.split('.').slice(-1).join('.');
+  setFileStore('extension', fileExtension);
 
   changeCanvasSize({
     width: imageData.width,
     height: imageData.height,
   });
 
-  const initLayer = addLayer({
-    enabled: true,
-    name: location.name,
-    mode: BlendMode.normal,
-    type: LayerType.Dot,
-    dotMagnification: 1,
-    opacity: 1,
-  });
+  const initLayer = addLayer(
+    {
+      enabled: true,
+      name: location.name,
+      mode: BlendMode.normal,
+      type: LayerType.Dot,
+      dotMagnification: 1,
+      opacity: 1,
+    },
+    {
+      noDiff: true,
+    }
+  );
 
   const agent = getAgentOf(initLayer.id);
   agent?.setBuffer(Uint8ClampedArray.from(imageData.data), false, true);
@@ -51,22 +59,28 @@ export function importImageFromWindow(): boolean {
 
   const fileName = imageData.fileName;
   const fileNameWithoutExt = fileName.split('.').slice(0, -1).join('.');
-
   setFileStore('location', 'name', fileNameWithoutExt);
+  const fileExtension = fileName.split('.').slice(-1).join('.');
+  setFileStore('extension', fileExtension);
 
   changeCanvasSize({
     width: imageData.width,
     height: imageData.height,
   });
 
-  const initLayer = addLayer({
-    enabled: true,
-    name: fileName,
-    mode: BlendMode.normal,
-    type: LayerType.Dot,
-    dotMagnification: 1,
-    opacity: 1,
-  });
+  const initLayer = addLayer(
+    {
+      enabled: true,
+      name: fileName,
+      mode: BlendMode.normal,
+      type: LayerType.Dot,
+      dotMagnification: 1,
+      opacity: 1,
+    },
+    {
+      noDiff: true,
+    }
+  );
 
   const agent = getAgentOf(initLayer.id);
   agent?.setBuffer(new Uint8ClampedArray(imageData.buffer), false, true);

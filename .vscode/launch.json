@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch App Debug",
+      "name": "debug",
       "type": "cppvsdbg",
       "request": "launch",
       // change the exe name to your actual exe name
@@ -23,12 +23,6 @@
       "timeout": 300000,
       "type": "msedge",
       "webRoot": "${workspaceFolder}"
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Tauri Dev All",
-      "configurations": ["Launch App Debug", "Attach to Webview"]
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "editor.formatOnSave": true,
-  "workbench.tree.indent": 25,
+  "workbench.tree.indent": 15,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },

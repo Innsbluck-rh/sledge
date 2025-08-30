@@ -17,11 +17,11 @@ export function getDefaultSettings() {
   const keyConfigStore = JSON.parse(JSON.stringify(makeDefaultKeyConfigStore()));
   const lastSettingsStore = JSON.parse(JSON.stringify(defaultLastSettingsStore));
 
-  console.log('defaultSettings: ', {
-    globalConfigStore,
-    keyConfigStore,
-    lastSettingsStore,
-  });
+  // console.log('defaultSettings: ', {
+  //   globalConfigStore,
+  //   keyConfigStore,
+  //   lastSettingsStore,
+  // });
 
   return {
     globalConfigStore,
@@ -36,11 +36,11 @@ export function getFallbackedSettings(source: { globalConfigStore?: any; keyConf
   const fbKeyConfigStore = deepObjectAssign(defaultSettings.keyConfigStore, source.keyConfigStore);
   const fbLastSettingsStore = deepObjectAssign(defaultSettings.lastSettingsStore, source.lastSettingsStore);
 
-  console.log('fallbackedSettings: ', {
-    fbGlobalConfigStore,
-    fbKeyConfigStore,
-    fbLastSettingsStore,
-  });
+  // console.log('fallbackedSettings: ', {
+  //   fbGlobalConfigStore,
+  //   fbKeyConfigStore,
+  //   fbLastSettingsStore,
+  // });
 
   return {
     globalConfigStore: fbGlobalConfigStore,

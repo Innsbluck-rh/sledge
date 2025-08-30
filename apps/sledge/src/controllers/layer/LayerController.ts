@@ -1,4 +1,6 @@
 import { mergeLayer } from '~/appliers/LayerMergeApplier';
+import { LayerPropsHistoryAction } from '~/controllers/history/actions/LayerPropsHistoryAction';
+import { projectHistoryController } from '~/controllers/history/ProjectHistoryController';
 import { Layer } from '~/models/layer/Layer';
 import { interactStore } from '~/stores/EditorStores';
 import { canvasStore, layerListStore, setLayerListStore } from '~/stores/ProjectStores';
@@ -25,15 +27,30 @@ export function setLayerName(layerId: string, newName: string): boolean {
   return true;
 }
 
-export function setLayerProp<K extends keyof Layer>(layerId: string, propName: K, newValue: Layer[K]) {
+interface SetLayerPropOptions {
+  noDiff?: boolean;
+}
+
+export function setLayerProp<K extends keyof Layer>(layerId: string, propName: K, newValue: Layer[K], options?: SetLayerPropOptions) {
   if (propName === 'id') {
     return;
   }
   const layer = findLayerById(layerId);
   if (!layer) return;
-
+  const beforeValue = layer[propName];
+  const before: Omit<Layer, 'id'> = { ...layer } as any;
   const idx = getLayerIndex(layerId);
   setLayerListStore('layers', idx, propName, newValue);
+  const after = { ...findLayerById(layerId)! } as Omit<Layer, 'id'>;
+  // Remove id from snapshots
+  delete (before as any).id;
+  delete (after as any).id;
+  if (!options?.noDiff) {
+    const act = new LayerPropsHistoryAction(layerId, before, after, {
+      from: `LayerController.setLayerProp(${String(propName)}: ${String(beforeValue)} > ${String(newValue)})`,
+    });
+    projectHistoryController.addAction(act);
+  }
   if (propNamesToUpdate.indexOf(propName) !== -1)
     eventBus.emit('webgl:requestUpdate', { onlyDirty: false, context: `Layer(${layerId}) prop updated(${propName})` });
 }
@@ -44,7 +61,9 @@ export function duplicateLayer(layerId: string) {
     {
       ...layer,
     },
-    getBufferOf(layerId)
+    {
+      initImage: getBufferOf(layerId),
+    }
   );
   eventBus.emit('webgl:requestUpdate', { onlyDirty: true, context: `Layer(${layerId}) duplicated` });
 }
@@ -60,12 +79,8 @@ export function clearLayer(layerId: string) {
 
   agent.setBuffer(newBuffer, true, true);
 
-  agent.getDiffManager().add({
-    kind: 'whole',
-    before: new Uint8ClampedArray(originalBuffer),
-    after: new Uint8ClampedArray(newBuffer.buffer),
-  });
-  agent.registerToHistory();
+  agent.getDiffManager().setWhole(new Uint8ClampedArray(originalBuffer), new Uint8ClampedArray(newBuffer.buffer));
+  agent.registerToHistory({ tool: 'clear' });
   agent.forceUpdate();
 }
 
@@ -107,7 +122,7 @@ export async function mergeToBelowLayer(layerId: string) {
   // merge
   await mergeLayer({ originLayer, targetLayer });
 
-  setLayerProp(layerId, 'enabled', false);
+  setLayerProp(layerId, 'enabled', false, { noDiff: true });
   if (layerListStore.activeLayerId === layerId) {
     setLayerListStore('activeLayerId', targetLayer.id);
   }
@@ -134,5 +149,4 @@ export function getCurrentPointingColorHex(): string | undefined {
   return undefined;
 }
 
-export const canUndo = (): boolean => getActiveAgent()?.canUndo() ?? false;
-export const canRedo = (): boolean => getActiveAgent()?.canRedo() ?? false;
+// Project-level history now drives undo/redo; layer-level canUndo/canRedo are deprecated.

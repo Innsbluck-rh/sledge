@@ -13,7 +13,7 @@ import { lastSettingsStore, setLastSettingsStore } from '~/stores/GlobalStores';
 import { canvasStore } from '~/stores/ProjectStores';
 import { exportDialogCustomScaleInput, exportDialogField, exportDialogFieldDisabled } from '~/styles/dialogs/export_dialog.css';
 import { sectionContent, sectionSubCaption, sectionSubContent } from '~/styles/section/section_item.css';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 
 const fileTypeOptions: DropdownOption<ExportableFileTypes>[] = [
   { label: 'png', value: 'png' },
@@ -98,7 +98,8 @@ const ExportContent: Component = () => {
     }
 
     if (fileStore.location.name === 'new project' && settings.fileName !== fileStore.location.name && settings.fileName) {
-      setFileStore('location', 'name', settings.fileName);
+      const fileNameWithoutExt = settings.fileName.split('.').slice(0, -1).join('.');
+      setFileStore('location', 'name', fileNameWithoutExt);
     }
     setLastSettingsStore('exportSettings', settings);
     await saveGlobalSettings(true);

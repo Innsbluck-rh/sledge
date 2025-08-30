@@ -7,7 +7,7 @@ import { Component, createEffect, createSignal, For, onMount, Show } from 'solid
 import ExportDialog from '~/components/global/dialogs/ExportDialog';
 import SettingDialog from '~/components/global/dialogs/SettingDialog';
 import SaveSection from '~/components/global/title_bar/SaveSection';
-import { createNew, openExistingProject, openProject } from '~/controllers/project/window';
+import { createNew, openExistingProject, openProject } from '~/io/window';
 import { globalConfig } from '~/stores/GlobalStores';
 import { menuItem, menuItemBackground, menuItemText, menuListLeft, menuListRight, root } from '~/styles/globals/top_menu_bar.css';
 import { addSkippedVersion, isNewVersionAvailable } from '~/utils/VersionUtils';

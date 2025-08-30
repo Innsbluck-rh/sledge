@@ -40,5 +40,6 @@ export const dumpProject = async (): Promise<Uint8Array> => {
     layerBuffers: getLayerBuffers(),
     imagePool: getEntries(),
   };
-  return packr.pack(project);
+  const packed = packr.pack(project);
+  return packed instanceof Uint8Array ? packed : Uint8Array.of(packed);
 };

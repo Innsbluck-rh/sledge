@@ -5,7 +5,7 @@ import { exists, mkdir, writeFile } from '@tauri-apps/plugin-fs';
 import { webGLRenderer } from '~/components/canvas/stacks/WebGLCanvas';
 import { setLastSettingsStore } from '~/stores/GlobalStores';
 import { canvasStore } from '~/stores/ProjectStores';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 
 export type ExportableFileTypes = 'png' | 'jpg' | 'svg';
 

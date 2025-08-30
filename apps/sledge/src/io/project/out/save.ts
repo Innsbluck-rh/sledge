@@ -9,8 +9,7 @@ import { fileStore, setFileStore } from '~/stores/EditorStores';
 import { canvasStore, setProjectStore } from '~/stores/ProjectStores';
 import { blobToDataUrl, dataUrlToBytes } from '~/utils/DataUtils';
 import { eventBus } from '~/utils/EventBus';
-import { join, PathToFileLocation as pathToFileLocation } from '~/utils/PathUtils';
-import getFileId from '../../../utils/getFileId';
+import { getFileUniqueId, join, PathToFileLocation as pathToFileLocation } from '~/utils/FileUtils';
 
 async function folderSelection(name?: string) {
   try {
@@ -34,7 +33,7 @@ async function folderSelection(name?: string) {
 }
 
 async function saveThumbnailData(selectedPath: string) {
-  const fileId = await getFileId(selectedPath);
+  const fileId = await getFileUniqueId(selectedPath);
   const { width, height } = canvasStore.canvas;
   const thumbSize = calcThumbnailSize(width, height);
   const thumbnailBlob = await new ThumbnailGenerator().generateCanvasThumbnailBlob(thumbSize.width, thumbSize.height);
@@ -61,9 +60,13 @@ export async function saveProject(name?: string, existingPath?: string): Promise
       console.log('project saved to:', selectedPath);
       addRecentFile(pathToFileLocation(selectedPath));
 
+      setFileStore('openAs', 'project');
+      setFileStore('extension', 'sledge');
       const location = pathToFileLocation(selectedPath);
       if (location) {
-        setFileStore('location', location);
+        setFileStore('location', 'path', location.path);
+        const fileNameWithoutExt = fileStore.location.name?.split('.').slice(0, -1).join('.') ?? 'new project';
+        setFileStore('location', 'name', fileNameWithoutExt);
         // setLastSettingsStore('exportSettings', 'dirPath', location.path);
       }
       // @ts-ignore

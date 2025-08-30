@@ -1,5 +1,5 @@
 import { Component, onCleanup, onMount } from 'solid-js';
-import { activeLayer } from '~/controllers/layer/LayerListController';
+import { projectHistoryController } from '~/controllers/history/ProjectHistoryController';
 import {
   getActiveToolCategoryId,
   getCurrentPresetConfig,
@@ -12,7 +12,6 @@ import { fileStore, toolStore } from '~/stores/EditorStores';
 import { keyConfigStore } from '~/stores/GlobalStores';
 import { openDebugViewer } from '~/utils/DebugViewer';
 import { isKeyMatchesToEntry } from '../../controllers/config/KeyConfigController';
-import { redoLayer, undoLayer } from '../../controllers/history/HistoryController';
 
 const KeyListener: Component = () => {
   // Helper function to check if the active element is an input field
@@ -54,12 +53,10 @@ const KeyListener: Component = () => {
     }
 
     if (isKeyMatchesToEntry(e, keyConfigStore['undo'])) {
-      const active = activeLayer();
-      if (active) undoLayer(active.id);
+      projectHistoryController.undo();
     }
     if (isKeyMatchesToEntry(e, keyConfigStore['redo'])) {
-      const active = activeLayer();
-      if (active) redoLayer(active.id);
+      projectHistoryController.redo();
     }
 
     if (isKeyMatchesToEntry(e, keyConfigStore['sizeIncrease'])) {

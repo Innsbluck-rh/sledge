@@ -58,6 +58,7 @@ vi.mock('~/controllers/log/LogController', () => ({
 // Tauri APIs are not needed for these unit tests; stub them generally to prevent import errors if accidentally referenced.
 vi.mock('@tauri-apps/api/path', () => ({ pictureDir: vi.fn(async () => 'C:/Pictures') }));
 vi.mock('@tauri-apps/plugin-fs', () => ({ exists: vi.fn(), mkdir: vi.fn(), writeFile: vi.fn(), readFile: vi.fn() }));
+vi.mock('@tauri-apps/plugin-dialog', () => ({ confirm: vi.fn(async () => true), message: vi.fn() }));
 vi.mock('@sledge/ui', () => ({}));
 vi.mock('@sledge/theme', () => ({
   themeOptions: [

@@ -27,12 +27,8 @@ const GrayScale: Component = () => {
                 grayscale(agent.getNonClampedBuffer(), canvasStore.canvas.width, canvasStore.canvas.height);
                 agent.forceUpdate();
 
-                agent.getDiffManager().add({
-                  kind: 'whole',
-                  before: originalBuffer,
-                  after: agent.getBuffer(),
-                });
-                agent.registerToHistory();
+                agent.getDiffManager().setWhole(originalBuffer, agent.getBuffer());
+                agent.registerToHistory({ tool: 'fx', fxName: 'GrayScale' });
               }
             }}
           >

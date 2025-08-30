@@ -28,7 +28,7 @@ import {
   configFormSectionLabel,
   configFormSections,
 } from '~/styles/components/config/config_form.css';
-import { join } from '~/utils/PathUtils';
+import { join } from '~/utils/FileUtils';
 import KeyConfigSettings from './KeyConfigSettings';
 
 const getValueFromMetaPath = (meta: FieldMeta) => meta.path.reduce((obj, key) => (obj as any)[key], globalConfig) as any;

@@ -126,7 +126,7 @@ export default class TileManager {
 
     if (collectDiff) this.addTileDiff(index, tile.uniformColor, color);
 
-    // 状態更新
+    // Update tile state
     tile.isDirty = true;
     tile.isUniform = true;
     tile.uniformColor = color;

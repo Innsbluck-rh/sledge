@@ -32,7 +32,7 @@ export async function safeInvoke<T>(cmd: string, args?: Record<string, unknown>)
 
 export type TauriWindowEvent =
   // window/editor
-  'onProjectLoad' | 'onSetup' | 'onLayerHistoryChanged' | 'onImagePoolChanged' | 'onImagePoolEntryChanged';
+  'onProjectLoad' | 'onSetup';
 
 export function emitEvent(event: TauriWindowEvent, msg?: Object) {
   return emit(event, msg);

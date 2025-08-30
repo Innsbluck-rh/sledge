@@ -1,5 +1,4 @@
 import { Point, Size2D, Vec2 } from '@sledge/core';
-import { PixelDiff } from '~/models/history/HistoryManager';
 import { RGBAColor } from '~/utils/ColorUtils';
 
 export default class PixelBufferManager {
@@ -14,7 +13,7 @@ export default class PixelBufferManager {
     return [this.buffer[i] ?? 0, this.buffer[i + 1] ?? 0, this.buffer[i + 2] ?? 0, this.buffer[i + 3] ?? 0];
   }
 
-  public setRawPixel(position: Vec2, color: RGBAColor): PixelDiff | undefined {
+  public setRawPixel(position: Vec2, color: RGBAColor): { before: RGBAColor; after: RGBAColor } | undefined {
     if (!this.isInBounds(position)) return undefined;
     const idx = position.y * this.width + position.x;
     const ptr = idx * 4;
@@ -25,13 +24,13 @@ export default class PixelBufferManager {
     this.buffer[ptr + 2] = color[2];
     this.buffer[ptr + 3] = color[3];
 
-    return { kind: 'pixel', position, before, after: color };
+  return { before, after: color };
   }
 
   public changeSize(
     newSize: Size2D,
-    destOrigin: Point = { x: 0, y: 0 }, // 新バッファ上の貼り付け開始位置
-    srcOrigin: Point = { x: 0, y: 0 } // 元バッファ上の切り取り開始位置
+    destOrigin: Point = { x: 0, y: 0 }, // paste origin on the new buffer
+    srcOrigin: Point = { x: 0, y: 0 } // crop origin on the source buffer
   ): void {
     const { width: newW, height: newH } = newSize;
     const oldW = this.width,
@@ -39,18 +38,18 @@ export default class PixelBufferManager {
     const oldBuf = this.buffer;
     const newBuf = new Uint8ClampedArray(newW * newH * 4);
 
-    // 元バッファから実際にコピーできる幅／高さ
+    // Width/height that can actually be copied from source buffer
     const copyW = Math.min(oldW - srcOrigin.x, newW - destOrigin.x);
     const copyH = Math.min(oldH - srcOrigin.y, newH - destOrigin.y);
 
     for (let y = 0; y < copyH; y++) {
-      // 元バッファの読み出し開始オフセット
+      // Read offset on the old buffer
       const oldRow = (y + srcOrigin.y) * oldW + srcOrigin.x;
       const oldOffset = oldRow * 4;
-      // 新バッファの書き込み開始オフセット
+      // Write offset on the new buffer
       const newRow = (y + destOrigin.y) * newW + destOrigin.x;
       const newOffset = newRow * 4;
-      // 一行分コピー
+      // Copy one row
       newBuf.set(oldBuf.subarray(oldOffset, oldOffset + copyW * 4), newOffset);
     }
 

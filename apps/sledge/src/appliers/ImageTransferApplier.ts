@@ -97,11 +97,7 @@ export async function transferToLayer({ entry, targetLayerId }: ImageTransferPar
   agent.setBuffer(dstBuf, false, true);
 
   const dm = agent.getDiffManager();
-  dm.add({
-    kind: 'whole',
-    before: originalBuffer,
-    after: dstBuf,
-  });
+  dm.setWhole(originalBuffer, dstBuf);
   dm.flush();
-  agent.registerToHistory();
+  agent.registerToHistory({ tool: 'image' });
 }

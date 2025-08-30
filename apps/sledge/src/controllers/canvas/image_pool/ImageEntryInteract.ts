@@ -1,4 +1,6 @@
 import { updateEntryPartial } from '~/controllers/canvas/image_pool/ImagePoolController';
+import { ImagePoolEntryPropsHistoryAction } from '~/controllers/history/actions/ImagePoolEntryPropsHistoryAction';
+import { projectHistoryController } from '~/controllers/history/ProjectHistoryController';
 import { ImagePoolEntry } from '~/models/canvas/image_pool/ImagePool';
 import { interactStore } from '~/stores/EditorStores';
 import { globalConfig } from '~/stores/GlobalStores';
@@ -21,6 +23,7 @@ class ImageEntryInteract {
   private startY = 0;
   private startScaleX = 1;
   private startScaleY = 1;
+  private startRotation = 0; // for future
   // rAF batching
   private rafId: number | null = null;
   private rafScheduled = false;
@@ -50,7 +53,7 @@ class ImageEntryInteract {
     if (!payload) return;
     const entry = this.getEntry();
     if (!entry) return;
-    updateEntryPartial(entry.id, {
+    const partialData = {
       x: payload.x,
       y: payload.y,
       // legacy representative scale
@@ -61,7 +64,8 @@ class ImageEntryInteract {
         scaleX: payload.scaleX,
         scaleY: payload.scaleY,
       },
-    });
+    };
+    updateEntryPartial(entry.id, partialData);
   };
   private resizePos: ResizePos | undefined;
 
@@ -96,6 +100,7 @@ class ImageEntryInteract {
   };
 
   private handlePointerMove = (e: PointerEvent) => {
+    console.log('move');
     if (!this.pointerActive || !this.mode) return;
     const zoom = interactStore.zoom || 1;
     const dx = (e.clientX - this.startClientX) / zoom;
@@ -277,6 +282,73 @@ class ImageEntryInteract {
       this.rafId = null;
       this.rafScheduled = false;
     }
+
+    const entry = this.getEntry();
+    if (entry) this.commitDiff(e, entry);
+  };
+
+  private readonly ignoreCommitProps: (keyof ImagePoolEntry)[] = [];
+
+  private commitDiff(e: PointerEvent, entry: ImagePoolEntry) {
+    const startPayload = {
+      x: this.startX,
+      y: this.startY,
+      scaleX: this.startScaleX,
+      scaleY: this.startScaleY,
+      rotation: this.startRotation,
+    };
+    const startPartialData = {
+      x: startPayload.x,
+      y: startPayload.y,
+      // legacy representative scale
+      scale: (startPayload.scaleX + startPayload.scaleY) / 2,
+      transform: {
+        x: startPayload.x,
+        y: startPayload.y,
+        scaleX: startPayload.scaleX,
+        scaleY: startPayload.scaleY,
+      },
+    };
+    const startEntry = { ...entry, ...startPartialData } as ImagePoolEntry;
+
+    const payload = {
+      x: entry.x,
+      y: entry.y,
+      scaleX: entry.transform?.scaleX ?? 1,
+      scaleY: entry.transform?.scaleY ?? 1,
+      rotation: this.startRotation,
+    };
+    const partialData = {
+      x: payload.x,
+      y: payload.y,
+      // legacy representative scale
+      scale: (payload.scaleX + payload.scaleY) / 2,
+      transform: {
+        x: payload.x,
+        y: payload.y,
+        scaleX: payload.scaleX,
+        scaleY: payload.scaleY,
+      },
+    };
+    const endEntry = { ...entry, ...partialData } as ImagePoolEntry;
+
+    if (JSON.stringify(startPayload) !== JSON.stringify(payload)) {
+      projectHistoryController.addAction(
+        new ImagePoolEntryPropsHistoryAction(entry.id, startEntry, endEntry, { from: 'ImageEntryInteract.commitDiff' })
+      );
+    }
+  }
+
+  private onWindowPointerUp = (e: PointerEvent) => {
+    const entry = this.getEntry();
+    if (!entry) return;
+    this.commitDiff(e, entry);
+  };
+
+  private onWindowPointerCancel = (e: PointerEvent) => {
+    const entry = this.getEntry();
+    if (!entry) return;
+    this.commitDiff(e, entry);
   };
 
   public setInteractListeners() {

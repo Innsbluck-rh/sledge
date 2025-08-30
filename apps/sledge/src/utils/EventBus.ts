@@ -11,8 +11,6 @@ export type Events = {
   'canvas:sizeChanged': { newSize: Size2D };
   'canvas:onAdjusted': {};
 
-  'layerHistory:changed': {};
-
   'selection:areaChanged': { commit: boolean };
   'selection:moved': { newOffset: Vec2 };
   'selection:stateChanged': { newState: SelectionState };

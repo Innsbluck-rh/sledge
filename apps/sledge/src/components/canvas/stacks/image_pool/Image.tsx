@@ -89,6 +89,7 @@ const Image: Component<{ entry: ImagePoolEntry; index: number }> = (props) => {
           cursor: `${props['data-pos']}-resize`,
           transform: `translate(-${size() / 2}px, -${size() / 2}px)`,
           position: 'absolute',
+          visibility: selected() ? 'visible' : 'collapse',
         }}
       />
     );
@@ -205,11 +206,9 @@ const Image: Component<{ entry: ImagePoolEntry; index: number }> = (props) => {
           left: 0,
           margin: 0,
           padding: 0,
-          'pointer-events': 'all',
           'image-rendering': 'pixelated',
           'shape-rendering': 'geometricPrecision',
           overflow: 'visible',
-          visibility: selected() ? 'visible' : 'collapse',
           'z-index': Consts.zIndex.imagePoolControl,
           width: `${stateStore.baseW * stateStore.sx}px`,
           height: `${stateStore.baseH * stateStore.sy}px`,
@@ -236,6 +235,7 @@ const Image: Component<{ entry: ImagePoolEntry; index: number }> = (props) => {
           stroke-width={1 / interactStore.zoom}
           vector-effect={'non-scaling-stroke'}
           style={{
+            visibility: selected() ? 'visible' : 'collapse',
             'pointer-events': 'none',
           }}
         />

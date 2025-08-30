@@ -50,11 +50,7 @@ export class WasmFloodFill implements Fill {
       threshold ?? 0
     );
 
-    dm.add({
-      kind: 'whole',
-      before: originalBuffer,
-      after: agent.getBuffer(),
-    });
+    dm.setWhole(originalBuffer, agent.getBuffer());
     const endTime = performance.now();
     console.log(`WASM FloodFill completed in ${(endTime - startTime).toFixed(2)}ms`);
 
@@ -98,11 +94,7 @@ export class WasmFloodFill implements Fill {
       limitMode
     );
 
-    dm.add({
-      kind: 'whole',
-      before: originalBuffer,
-      after: agent.getBuffer(),
-    });
+    dm.setWhole(originalBuffer, agent.getBuffer());
     const endTime = performance.now();
     console.log(`WASM FloodFill with mask (${limitMode}) completed in ${(endTime - startTime).toFixed(2)}ms`);
 

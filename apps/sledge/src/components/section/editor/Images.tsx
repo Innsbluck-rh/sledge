@@ -19,7 +19,7 @@ const Images: Component<{}> = () => {
       title='images.'
       subHeaderIcons={[
         {
-          src: '/icons/misc/add.png',
+          src: '/icons/misc/plus_12.png',
           onClick: async () => {
             const path = await openImageImportDialog();
             if (path !== undefined) {
@@ -28,7 +28,7 @@ const Images: Component<{}> = () => {
           },
         },
         {
-          src: '/icons/misc/remove_minus.png',
+          src: '/icons/misc/minus_12.png',
           onClick: async () => {
             const id = selectedEntry()?.id;
             if (id) removeEntry(id);

@@ -4,6 +4,7 @@ import LayerImageAgent from '~/controllers/layer/image/LayerImageAgent';
 import { getAgentOf } from '~/controllers/layer/LayerAgentManager';
 import { selectionManager } from '~/controllers/selection/SelectionManager';
 import { ToolArgs, ToolBehavior } from '~/tools/ToolBehavior';
+import { TOOL_CATEGORIES } from '~/tools/Tools';
 import { eventBus } from '~/utils/EventBus';
 
 export class MoveTool implements ToolBehavior {
@@ -178,14 +179,10 @@ export class MoveTool implements ToolBehavior {
     const agent = getAgentOf(this.layerId);
     if (!agent) return;
 
-    agent.getDiffManager().add({
-      kind: 'whole',
-      before: new Uint8ClampedArray(this.originalBuffer.buffer),
-      after: new Uint8ClampedArray(agent.getBuffer()),
-    });
+    agent.getDiffManager().setWhole(new Uint8ClampedArray(this.originalBuffer.buffer), new Uint8ClampedArray(agent.getBuffer()));
     this.originalBuffer = undefined;
 
-    agent.registerToHistory();
+    agent.registerToHistory({ tool: TOOL_CATEGORIES.MOVE });
     agent.forceUpdate();
 
     selectionManager.commit();

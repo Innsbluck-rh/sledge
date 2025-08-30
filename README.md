@@ -12,7 +12,7 @@
 
 <br>
 
-<img src="assets/0827sledge_dark.png" alt="F.C.H.S." width=600 />
+<img src="assets/0827sledge_dark.png" alt="the visual of sledge." width=600 />
 
 <br>
 Sledge is a drawing tool.

@@ -1,27 +1,28 @@
-import { Component, createEffect, createSignal, onMount } from 'solid-js';
-import { redoLayer, undoLayer } from '~/controllers/history/HistoryController';
-import { canRedo, canUndo } from '~/controllers/layer/LayerController';
+import { Component, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import { projectHistoryController } from '~/controllers/history/ProjectHistoryController';
 import { redoIcon, topRightNav, undoIcon, undoRedoContainer } from '~/styles/components/canvas/canvas_controls.css';
 
 import { layerListStore } from '~/stores/ProjectStores';
-import { eventBus } from '~/utils/EventBus';
+// no longer relying on layerHistory:changed; use projectHistoryController.onChange
 
 const CanvasControls: Component = () => {
-  const [activeCanUndo, setActiveCanUndo] = createSignal(canUndo());
-  const [activeCanRedo, setActiveCanRedo] = createSignal(canRedo());
+  const [activeCanUndo, setActiveCanUndo] = createSignal(projectHistoryController.canUndo());
+  const [activeCanRedo, setActiveCanRedo] = createSignal(projectHistoryController.canRedo());
 
   onMount(() => {
-    eventBus.on('layerHistory:changed', () => {
-      setActiveCanUndo(canUndo());
-      setActiveCanRedo(canRedo());
+    const dispose = projectHistoryController.onChange((state) => {
+      setActiveCanUndo(state.canUndo);
+      setActiveCanRedo(state.canRedo);
     });
+    onCleanup(() => dispose());
   });
 
   createEffect(() => {
     layerListStore.activeLayerId;
 
-    setActiveCanUndo(canUndo());
-    setActiveCanRedo(canRedo());
+    // keep effect to refresh when active layer changes, but values come from projectHistory
+    setActiveCanUndo(projectHistoryController.canUndo());
+    setActiveCanRedo(projectHistoryController.canRedo());
   });
 
   return (
@@ -52,7 +53,7 @@ const CanvasControls: Component = () => {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          undoLayer(layerListStore.activeLayerId);
+          projectHistoryController.undo();
         }}
       >
         <div
@@ -72,7 +73,7 @@ const CanvasControls: Component = () => {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          redoLayer(layerListStore.activeLayerId);
+          projectHistoryController.redo();
         }}
       >
         <div

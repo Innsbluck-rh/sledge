@@ -78,7 +78,7 @@ export default class LayerCanvasOperator {
         eventBus.emit('preview:requestUpdate', { layerId: layer.id });
       }
       if (result.shouldRegisterToHistory) {
-        agent.registerToHistory();
+        agent.registerToHistory({ tool: toolCategory.id });
       }
 
       if (result.shouldReturnToPrevTool) {

@@ -13,9 +13,7 @@ export class ImagePoolEntryMenu extends RightClickMenu {
         await MenuItem.new({
           id: 'remove',
           text: 'remove',
-          action: () => {
-            removeEntry(id);
-          },
+          action: () => removeEntry(id),
         }),
       ],
     });

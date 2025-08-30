@@ -1,17 +1,16 @@
 import { flexRow } from '@sledge/core';
 import { vars } from '@sledge/theme';
 import { Dropdown, Slider } from '@sledge/ui';
-import { confirm } from '@tauri-apps/plugin-dialog';
 import { Component, createEffect, createSignal, For } from 'solid-js';
 import SectionItem from '~/components/section/SectionItem';
 import { setLayerProp } from '~/controllers/layer/LayerController';
 import { activeLayer, addLayer, allLayers, moveLayer, removeLayer } from '~/controllers/layer/LayerListController';
-import { useLongPressReorder } from '~/hooks/useLongPressReorder';
 import { BlendModeOptions } from '~/models/layer/Layer';
 import { layerListStore } from '~/stores/ProjectStores';
 import { layerList } from '~/styles/section/editor/layer.css';
 import { sectionContent } from '~/styles/section/section_item.css';
 import { listenEvent } from '~/utils/TauriUtils';
+import { useLongPressReorder } from '~/utils/useLongPressReorder';
 import BaseLayerItem from './item/BaseLayerItem';
 import LayerItem from './item/LayerItem';
 
@@ -55,25 +54,21 @@ const LayerList: Component<{}> = () => {
       title='layers.'
       subHeaderIcons={[
         {
-          src: '/icons/misc/add.png',
+          src: '/icons/misc/plus_12.png',
           onClick: () => {
             addLayer({ name: 'layer1' });
             setItems(allLayers());
           },
         },
         {
-          src: '/icons/misc/remove_minus.png',
-          onClick: async () => {
-            const ok = await confirm(`Sure to remove "${activeLayer().name}" ?\nYou can NOT restore this action.`, {
-              kind: 'warning',
-              title: 'Remove Layer',
-              cancelLabel: 'Cancel',
-              okLabel: 'Remove',
-            });
-            if (ok) {
-              removeLayer(activeLayer()?.id);
-              setItems(allLayers());
+          src: '/icons/misc/minus_12.png',
+          onClick: () => {
+            const id = activeLayer()?.id;
+            if (id) {
+              // LayerListController.removeLayer already adds history; just call it
+              removeLayer(id);
             }
+            setItems(allLayers());
           },
           disabled: layerListStore.layers.length <= 1,
         },
@@ -110,9 +105,12 @@ const LayerList: Component<{}> = () => {
               min={0}
               max={1}
               allowFloat={true}
+              floatSignificantDigits={2}
               labelMode={'none'}
               onChange={(newValue) => {
-                setLayerProp(activeLayer().id, 'opacity', newValue);
+                setLayerProp(activeLayer().id, 'opacity', newValue, {
+                  noDiff: true,
+                });
               }}
             />
           </div>

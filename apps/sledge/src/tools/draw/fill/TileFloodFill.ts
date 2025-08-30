@@ -1,7 +1,6 @@
 import { Vec2 } from '@sledge/core';
 import LayerImageAgent from '~/controllers/layer/image/LayerImageAgent';
 import { TileIndex } from '~/controllers/layer/image/managers/Tile';
-import { PixelDiff } from '~/models/history/HistoryManager';
 import { colorMatch } from '~/utils/ColorUtils';
 import { Fill, FillProps } from './FillTool';
 
@@ -34,7 +33,7 @@ export class TileFloodFill implements Fill {
     const tilesFilled: TileIndex[] = [];
     const tileQueue: TileIndex[] = [tm.getTileIndex(position)];
 
-    const pxDiffs: PixelDiff[] = [];
+  const pxDiffs: Array<{ position: Vec2; before: [number, number, number, number]; after: [number, number, number, number] }> = [];
     const visitedPx = new Uint8Array(agent.getWidth() * agent.getHeight());
 
     // First tile flood pass
@@ -134,10 +133,9 @@ export class TileFloodFill implements Fill {
 
     for (const ti of tilesFilled) tm.fillWholeTile(ti, color, true);
     for (const p of pixelsFilled) {
-      const diff = agent.setPixel(p, color, false);
-      if (diff) pxDiffs.push(diff);
+      const changed = agent.setPixel(p, color, false);
+      if (changed) dm.addPixel(p, changed.before, changed.after);
     }
-    if (pxDiffs.length > 0) dm.add(pxDiffs);
   }
 
   fillWithMask({ agent, color, position, selectionMask, limitMode }: MaskFillProps) {
@@ -195,12 +193,10 @@ export class TileFloodFill implements Fill {
     }
 
     // ピクセルを塗りつぶし
-    const pxDiffs: PixelDiff[] = [];
     for (const p of pixelsFilled) {
-      const diff = agent.setPixel(p, color, false);
-      if (diff) pxDiffs.push(diff);
+      const changed = agent.setPixel(p, color, false);
+      if (changed) dm.addPixel(p, changed.before, changed.after);
     }
-    if (pxDiffs.length > 0) dm.add(pxDiffs);
 
     console.log(`boundary-constrained fill finished: ${pixelsFilled.length} pixels`);
   }
